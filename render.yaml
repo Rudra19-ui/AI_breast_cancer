@@ -11,6 +11,14 @@ services:
     # No build step; publish repository root as-is.
     staticPublishPath: .
     routes:
-      - type: rewrite
+      # Canonical path in the browser bar (no ".html").
+      # See: https://render.com/docs/redirects-rewrites
+      - type: redirect
         source: /
+        destination: /research_paper_v2
+      - type: redirect
+        source: /research_paper_v2.html
+        destination: /research_paper_v2
+      - type: rewrite
+        source: /research_paper_v2
         destination: /research_paper_v2.html
