@@ -1,0 +1,16 @@
+# Render Blueprint: static hosting for the HTML paper viewer.
+# Deploy: Dashboard → Blueprints → New Blueprint Instance → connect this repo → apply.
+#
+# Docs: https://docs.render.com/blueprint-spec
+# Static sites: https://render.com/docs/static-sites
+
+services:
+  - type: web
+    name: research-paper-viewer
+    runtime: static
+    # No build step; publish repository root as-is.
+    staticPublishPath: .
+    routes:
+      - type: rewrite
+        source: /
+        destination: /research_paper_v2.html
