@@ -276,8 +276,9 @@
     border-radius: 3px;
   }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<!-- Same-origin libs: CDNs/CSP blocked in some browsers; "/" works with extensionless Rewrite URLs -->
+<script src="/vendor/jspdf.umd.min.js"></script>
+<script src="/vendor/jszip.min.js"></script>
 </head>
 <body>
 <div class="toolbar">
@@ -656,16 +657,22 @@
       closeDropdowns();
     });
 
+    function getJsPDFConstructor() {
+      if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
+      if (typeof window.jsPDF === 'function') return window.jsPDF;
+      return null;
+    }
+
     exportPdfBtn.addEventListener('click', function (e) {
       e.stopPropagation();
       closeDropdowns();
-      if (!window.jspdf || !window.jspdf.jsPDF) {
-        alert('PDF library failed to load. Check your connection and refresh the page.');
+      var JsPDF = getJsPDFConstructor();
+      if (!JsPDF) {
+        alert('PDF library failed to load. Refresh the page. If it persists, open /vendor/jspdf.umd.min.js in a new tab to verify the file is deployed.');
         return;
       }
       exportPdfBtn.disabled = true;
       exportZipBtn.disabled = true;
-      var JsPDF = window.jspdf.jsPDF;
       Promise.all(wrappers.map(function (w) { return waitImg(w.querySelector('img')); }))
         .then(function () {
           var pdf = null;
@@ -702,7 +709,7 @@
       e.stopPropagation();
       closeDropdowns();
       if (!window.JSZip) {
-        alert('ZIP library failed to load. Check your connection and refresh the page.');
+        alert('ZIP library failed to load. Refresh the page or verify /vendor/jszip.min.js is deployed.');
         return;
       }
       exportPdfBtn.disabled = true;
